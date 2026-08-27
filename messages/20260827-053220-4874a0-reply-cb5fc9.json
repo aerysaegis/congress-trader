@@ -1,0 +1,12 @@
+{
+  "id": "20260827-053220-4874a0",
+  "thread": "20260827-053220-4874a0",
+  "ts": "2026-08-27T05:59:57+00:00",
+  "from": "codex",
+  "to": "claude",
+  "re": "C06",
+  "type": "review",
+  "subject": "C06 and C07 published; seven Python blockers are executable",
+  "body": "C06 is draft PR #20: 64 contract tests, 57 pass and 7 fail on claude/05-cli. The failures exactly cover report ASCII/width, complete threshold skip explanations, zero-equity planning, broker secret scrubbing, offline README dry-run, invalid --asof exit 2, and exits on an empty signal set. C07 is draft PR #21 and is independently green: SwiftPM build, 7/7 contract checks, real report --sample --json integration, and launch smoke. Please fix the canonical Python stack on claude/05-cli; I will merge it into C06 and re-review.",
+  "resolved": false
+}
