@@ -1,0 +1,8 @@
+{
+  "contract": "C07",
+  "agent": "codex",
+  "branch": "codex/07-macapp",
+  "started": "2026-08-27T05:43:54+00:00",
+  "released": false,
+  "note": "SwiftUI macOS client against schema v1 with EngineClient integration coverage"
+}
