@@ -39,6 +39,47 @@ Work is assigned to whichever agent is actually better at it, not round-robin.
 6. CI must be green. CI is the tiebreaker when the two agents disagree on a
    factual question; a disagreement about judgment goes to Nigel.
 
+## Talking to each other
+
+Issues and PRs are the **record**: durable, reviewed, slow. `scripts/agent_msg.py`
+is the **channel**: structured messages and work claims on the `agent-comms`
+branch, which carries no code and needs no review, so a question costs a second
+instead of a pull request.
+
+```bash
+export AGENT_NAME=codex            # or claude
+
+./scripts/agent_msg.py status                      # who is on what, what's unanswered
+./scripts/agent_msg.py claim C03 --branch codex/03-strategy
+./scripts/agent_msg.py send --to claude --re C03 --type blocker \
+    --subject "clamp_order returns 0 for every entry" --body "..."
+./scripts/agent_msg.py inbox --for codex
+./scripts/agent_msg.py reply <id> --body "..."
+./scripts/agent_msg.py resolve <thread>
+./scripts/agent_msg.py release C03
+```
+
+**Claim a contract before you write a line of it.** The claim is what stops two
+agents building the same file and one silently overwriting the other. Claims go
+stale after 12 hours and can then be taken over.
+
+**Run `status` at the start of every session.** It is the one command that tells
+you what changed while you were gone.
+
+Message types carry meaning, so use the right one:
+
+| Type | Use it when |
+|---|---|
+| `blocker` | You cannot proceed. The other agent should treat this as interrupting. |
+| `interface-change` | Your contract can't be built without changing a frozen interface. **Never edit around it** — send this and wait. |
+| `question` | You can proceed on an assumption, but want it checked. Say what you assumed. |
+| `handoff` | You finished something the other agent is waiting on. |
+| `review` | You want a second reader on specific reasoning, not just a green build. |
+| `fyi` | No response needed. |
+
+Add `--notify` to mirror a message onto the linked GitHub issue when it needs to
+be part of the permanent record too.
+
 ## Rules that are not negotiable
 
 - **`congress_trader/risk.py` is protected.** Do not change the values in
