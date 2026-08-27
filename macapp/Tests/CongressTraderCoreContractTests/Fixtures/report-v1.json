@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-27T05:44:32Z",
+  "asof": "2026-08-26",
+  "lookback": 60,
+  "min_members": 3,
+  "midpoint": "geometric",
+  "source": "sample",
+  "has_parties": true,
+  "n_trades_considered": 12,
+  "dropped": {"options": 1},
+  "signals": [{
+    "ticker": "NVDA",
+    "sector": "Information Technology",
+    "score": 6.49,
+    "components": {"breadth": 2.7, "net_flow": 0.9},
+    "raw": {"breadth": 9.0, "net_flow": 2.6, "acceleration": 2.6, "cluster": 4.3, "freshness": -26.0, "bipartisan": 4.0},
+    "n_members": 9,
+    "n_buyers": 9,
+    "n_sellers": 0,
+    "net_dollars": 413136.0,
+    "gross_dollars": 413136.0,
+    "n_trades": 9,
+    "buyers": ["Amara Nwosu"],
+    "sellers": [],
+    "parties": {"D": 5, "R": 4},
+    "first_date": "2026-08-18",
+    "last_date": "2026-08-24",
+    "median_lag_days": 28.0,
+    "contested": false,
+    "direction": "buy"
+  }],
+  "sectors": [{
+    "sector": "Information Technology",
+    "net_dollars": 413136.0,
+    "gross_dollars": 413136.0,
+    "n_members": 9,
+    "n_trades": 9,
+    "recent_net": 300000.0,
+    "prior_net": 113136.0,
+    "momentum": 1.2
+  }],
+  "contested": [{
+    "ticker": "LLY",
+    "sector": "Health Care",
+    "buyers": ["Amara Nwosu"],
+    "sellers": ["Victor Kaplan"],
+    "buy_dollars": 200000.0,
+    "sell_dollars": 100000.0,
+    "disagreement": 1.0
+  }],
+  "filers": [{
+    "member": "Amara Nwosu",
+    "chamber": "house",
+    "party": "D",
+    "n_trades": 3,
+    "n_tickers": 2,
+    "median_lag_days": 20.0,
+    "mean_lag_days": 19.3,
+    "fastest_lag_days": 12,
+    "gross_dollars": 2310655.4
+  }]
+}
