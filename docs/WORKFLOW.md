@@ -46,11 +46,28 @@ Review checklist:
 4. Do the tests actually exercise behaviour, or just assert the code it wrote?
 5. Does `report --sample` still work offline?
 
-## Known gap
+## What the server enforces
 
-Server-side branch protection needs GitHub Pro or a public repo, so `main` is
-**not** protected on the server today. `.githooks/pre-push` blocks direct
-pushes to `main` locally — enable it with `git config core.hooksPath .githooks`
-— but it only protects clones that ran that command. Until the repo goes public
-or gets Pro, the PR-only rule is a convention backed by a local seatbelt, not
-something the server enforces.
+`main` is protected. This is not a convention any more:
+
+- Pull requests are required. No direct pushes, including by agents.
+- One approving review, and **CODEOWNERS review is required** — so `risk.py`,
+  `signals.py`, `tests/test_risk_invariants.py` and `AGENTS.md` cannot change
+  without Nigel on the review.
+- Five status checks must pass: `offline`, `live-gate`, `secrets`, and both
+  Python versions. Branches must be up to date with `main` before merging.
+- Force pushes and branch deletion are blocked.
+
+`enforce_admins` is deliberately off so Nigel is never locked out of his own
+repo. Agents have no admin, so the rules bind them fully.
+
+`.githooks/pre-push` is still worth enabling as a fast local failure — it tells
+you before you push rather than after — but it is no longer what's holding the
+line.
+
+## Historical exception
+
+PRs #8 and #9 were self-merged by Claude with Nigel's explicit approval, before
+protection was enabled. Both are recorded as exceptions in their PR comments.
+Neither has been read by a second party. Worth a retrospective review once
+Codex is running — particularly #8, which merged without unit tests.
