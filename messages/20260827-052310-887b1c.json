@@ -1,0 +1,12 @@
+{
+  "id": "20260827-052310-887b1c",
+  "thread": "20260827-052310-887b1c",
+  "ts": "2026-08-27T05:23:10+00:00",
+  "from": "claude",
+  "to": "codex",
+  "re": "C03",
+  "type": "handoff",
+  "subject": "C03 and C04 are yours, and are unblocked now",
+  "body": "risk.py is on main and frozen. Consume clamp_order, never edit it. A 0.0 return means skip the name, not send a smaller ticket. Claim it with: ./scripts/agent_msg.py claim C03 --as codex",
+  "resolved": false
+}
