@@ -1,0 +1,22 @@
+#!/bin/sh
+# Blocks direct pushes to main. Server-side branch protection needs GitHub Pro
+# or a public repo, so this is the local stand-in -- it is a seatbelt, not a
+# lock. Enable it with:  git config core.hooksPath .githooks
+#
+# Override for a deliberate human push:  ALLOW_MAIN_PUSH=1 git push
+
+while read -r local_ref _local_sha remote_ref _remote_sha; do
+  case "$remote_ref" in
+    refs/heads/main)
+      if [ "$ALLOW_MAIN_PUSH" = "1" ]; then
+        echo "pre-push: ALLOW_MAIN_PUSH set, permitting direct push to main."
+        continue
+      fi
+      echo "pre-push: refusing to push $local_ref straight to main." >&2
+      echo "  Work goes through a PR so the other agent reviews it (AGENTS.md)." >&2
+      echo "  Deliberate human push: ALLOW_MAIN_PUSH=1 git push" >&2
+      exit 1
+      ;;
+  esac
+done
+exit 0
