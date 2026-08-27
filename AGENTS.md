@@ -14,13 +14,52 @@ Work is assigned to whichever agent is actually better at it, not round-robin.
 
 | Area | Owner | Why |
 |---|---|---|
-| `signals.py`, `risk.py`, `models.py`, `config.py`, `normalize.py`, `sources.py` | Claude | Cross-file invariants and judgment calls where the spec is ambiguous |
-| `report.py`, `analytics.py` | Codex | Well-specified rendering against frozen types |
-| `strategy.py`, `broker.py` | Codex | Mechanical, heavily spec'd, and fully covered by invariant tests |
-| `__main__.py` / CLI | Codex | Flag plumbing with an exact documented surface |
-| `tests/` (except risk invariants) | Codex | High-volume case generation |
-| `macapp/` (SwiftUI) | Codex | Language breadth |
-| Contracts, reviews, merges | Claude | Keeping the pieces coherent |
+| `signals.py`, `risk.py`, `models.py`, `config.py`, `normalize.py`, `sources.py`, `analytics.py` | Claude | Cross-file invariants and judgment calls where the spec is ambiguous |
+| `report.py`, `strategy.py`, `broker.py`, `__main__.py` | Claude | Reassigned — see the replanning log below |
+| `tests/` (except risk invariants) | **Codex** | Independent verification of code Claude wrote — the strongest cross-check available here |
+| `macapp/` (SwiftUI) | **Codex** | Language breadth |
+| Review of every unreviewed PR | **Codex** | Nothing Claude built has had a second reader |
+| Contracts and merges | Claude | Keeping the pieces coherent |
+
+## Replanning log
+
+**v2 — the Python stack moved to Claude, and verification moved to Codex.**
+
+The v1 split gave Codex C02–C07. It assumed Codex was running. It wasn't — the
+CLI was never installed, so every contract after C01 was blocked on an agent
+that could not start, while Nigel was asking for construction.
+
+Rather than let the critical path idle, Claude built the Python stack. That was
+the right call for throughput and the wrong one for verification: **C01, C02,
+C03, C04 and C05 were all written by one agent, and PRs #8 and #9 were merged
+by that same agent with no second reader.**
+
+So v2 rebalances toward the thing that is now actually scarce. Codex does not
+get leftover implementation work; it gets the two jobs that are worth most
+given what happened:
+
+1. **`tests/` (C06).** Tests written by the agent that wrote the code mostly
+   assert that the code does what it does. Tests written independently, from
+   the contracts rather than from the implementation, are a real check. This is
+   now the highest-value contract in the repo.
+2. **Review of everything Claude built.** Listed in the review queue below.
+
+`macapp/` (C07) stays with Codex as originally planned.
+
+**What this does not fix:** Claude built the code and wrote the contracts the
+tests will be written from. If a contract is wrong, Codex's tests will
+faithfully encode the same mistake. The `_midline` duplication flagged in #8 is
+exactly this shape. Nigel is the only real backstop there.
+
+### Review queue for Codex
+
+| PR | What | Risk if unreviewed |
+|---|---|---|
+| #8 | `analytics.py` — **merged unreviewed** | `_midline` may drift from `signals._raw_components`; nothing catches it |
+| #9 | CI gating — **merged unreviewed** | A CI bug hides other bugs; this one already produced a false green |
+| #10 | Branch protection docs | Low |
+| #12 | Agent channel | Medium — it is now how we coordinate |
+| #13 | `report.py` | Wire format the macOS client depends on |
 
 ## The loop
 
