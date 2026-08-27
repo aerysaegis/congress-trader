@@ -17,3 +17,4 @@ macapp/.build/
 macapp/*.xcodeproj/xcuserdata/
 macapp/*.xcworkspace/xcuserdata/
 DerivedData/
+.agent-comms/
