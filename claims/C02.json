@@ -3,6 +3,8 @@
   "agent": "claude",
   "branch": "claude/02-report",
   "started": "2026-08-27T05:23:08+00:00",
-  "released": false,
-  "note": "Taking the critical path; Codex isn't up yet"
+  "released": true,
+  "note": "Taking the critical path; Codex isn't up yet",
+  "released_at": "2026-08-27T05:32:18+00:00",
+  "released_by": "claude"
 }
