@@ -28,6 +28,10 @@ Shared: `--lookback INT` (default 60), `--min-members INT` (default 3),
 
 - **`--live` without `--yes-really` exits non-zero with a clear message and
   places no orders.** This gate is not negotiable and is covered by a test.
+  **The refusal message must contain the literal string `--yes-really`.** CI
+  greps for it, because a non-zero exit on its own proves nothing -- an import
+  error exits non-zero too, and a gate check that passes on an import error is
+  worse than no check at all.
 - `main(argv=None) -> int`. Return the exit code, don't call `sys.exit` from
   anywhere but the `if __name__ == "__main__"` guard, so tests can call it.
 - Exit codes: `0` success, `1` runtime failure, `2` bad usage.
