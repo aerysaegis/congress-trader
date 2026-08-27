@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "congress-trader"
+version = "0.1.0"
+description = "STOCK Act disclosure clustering signal, with optional Alpaca execution."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = []
+
+[project.optional-dependencies]
+trade = ["alpaca-py>=0.21"]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.scripts]
+congress-trader = "congress_trader.__main__:main"
+
+[tool.setuptools]
+packages = ["congress_trader"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]

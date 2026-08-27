@@ -1,0 +1,87 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e ".[dev]"
+      - name: Lint
+        run: ruff check .
+      - name: Tests
+        run: pytest
+
+  offline:
+    # The analysis path must never need the network or a broker SDK.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -e .
+      - name: Report runs offline
+        run: python3 -m congress_trader report --sample
+      - name: JSON output is valid
+        run: python3 -m congress_trader report --sample --json | python3 -m json.tool > /dev/null
+      - name: Broker imports without alpaca-py
+        run: python3 -c "import congress_trader.broker"
+      - name: Dry run needs no credentials
+        env:
+          ALPACA_API_KEY: ""
+          ALPACA_API_SECRET: ""
+        run: python3 -m congress_trader run --dry-run --sample
+
+  live-gate:
+    # --live without --yes-really must place nothing and exit non-zero.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -e .
+      - name: Live gate holds
+        run: |
+          if python3 -m congress_trader run --live --sample; then
+            echo "::error::--live succeeded without --yes-really. The gate is broken."
+            exit 1
+          fi
+          echo "gate held"
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: No credentials committed
+        run: |
+          if git ls-files | grep -qx '.env'; then
+            echo "::error::.env is tracked. Remove it and rotate the keys."; exit 1
+          fi
+          if git grep -nIE 'ALPACA_API_(KEY|SECRET)[[:space:]]*=[[:space:]]*["'"'"']?[A-Za-z0-9]{16,}' \
+               -- . ':!.env.example' ':!.github/workflows/ci.yml'; then
+            echo "::error::possible hardcoded credential"; exit 1
+          fi
+          echo "clean"
+
+  macapp:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build SwiftUI client
+        run: |
+          if [ ! -f macapp/Package.swift ]; then
+            echo "macapp not implemented yet (contract 07) - skipping"; exit 0
+          fi
+          swift build --package-path macapp

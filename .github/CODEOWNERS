@@ -1,0 +1,5 @@
+# Protected core. Changes here need a human on the review, not just an agent.
+/congress_trader/risk.py        @aerysaegis
+/congress_trader/signals.py     @aerysaegis
+/tests/test_risk_invariants.py  @aerysaegis
+/AGENTS.md                      @aerysaegis
