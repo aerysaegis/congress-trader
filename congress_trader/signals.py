@@ -78,6 +78,17 @@ class TickerSignal:
 FLOW_UNIT = 1_000.0
 
 
+def window_midline(asof: date, lookback: int) -> float:
+    """The ordinal split point between the recent and prior halves of a window.
+
+    Exported because analytics.py needs exactly this boundary. It used to
+    duplicate the arithmetic, which meant sector momentum and the acceleration
+    component could silently disagree about which trades counted as recent.
+    One definition, one place.
+    """
+    return asof.toordinal() - lookback / 2.0
+
+
 def _log_flow(dollars: float) -> float:
     """Signed log-scale dollars, so $15M is ~2x $150k rather than 100x."""
     return math.copysign(math.log10(1.0 + abs(dollars) / FLOW_UNIT), dollars)
@@ -136,7 +147,7 @@ def _raw_components(
     net_flow = _log_flow(net)
 
     # acceleration: recent half of the window against the older half.
-    midline = asof.toordinal() - lookback / 2.0
+    midline = window_midline(asof, lookback)
     recent = sum(t.signed_dollars(midpoint) for t in trades if t.transaction_date.toordinal() > midline)
     older = sum(t.signed_dollars(midpoint) for t in trades if t.transaction_date.toordinal() <= midline)
     acceleration = _log_flow(recent) - _log_flow(older)

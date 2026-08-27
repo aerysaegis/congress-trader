@@ -12,7 +12,7 @@ from datetime import date
 
 from .config import Reference
 from .models import Side, Trade
-from .signals import _log_flow
+from .signals import _log_flow, window_midline
 
 
 @dataclass(frozen=True, slots=True)
@@ -60,9 +60,9 @@ class FilerRow:
 
 
 def _midline(trades: list[Trade], lookback: int, asof: date | None) -> float:
-    """The recent/prior split point, matching signals._raw_components."""
+    """The recent/prior split point. Delegates so it cannot drift from signals."""
     asof = asof or max(t.transaction_date for t in trades)
-    return asof.toordinal() - lookback / 2.0
+    return window_midline(asof, lookback)
 
 
 def sector_rotation(
